@@ -42,8 +42,8 @@ phoenixnebula
 ### Via Docker
 
 ```bash
-docker pull yourusername/phoenixnebula:latest
-docker run -it yourusername/phoenixnebula:latest
+docker pull nobodydeveloper/phoenixnebula:latest
+docker run -it nobodydeveloper/phoenixnebula:latest
 ```
 
 ### From source (Development)
