@@ -1,1 +1,4 @@
 __pycache__/
+venv/
+dist/
+phoenixnebula_cli.egg-info/
