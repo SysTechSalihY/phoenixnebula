@@ -72,7 +72,7 @@ class TestPathExpansion(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         self.original_home = os.environ.get("HOME")
-        self.test_home = "/home/testuser"
+        self.test_home = "/home/saldev"
         os.environ["HOME"] = self.test_home
 
     def tearDown(self):

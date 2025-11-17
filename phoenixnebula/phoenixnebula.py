@@ -703,8 +703,10 @@ def run_builtin(cmd_tokens, stdin_data=None):
             exit_code = 1
         sys.exit(exit_code)
     elif cmd == "clear":
-        # Clear screen
-        print("\033[2J\033[H", end='', flush=True)
+        try:
+           os.system("clear")
+        except:
+           os.write(sys.stdout.fileno(), b"\033[2J\033[H")
     elif cmd == "true":
         last_exit_code = 0
     elif cmd == "false":
