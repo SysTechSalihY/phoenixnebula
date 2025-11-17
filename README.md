@@ -45,6 +45,20 @@ phoenixnebula
 docker pull nobodydeveloper/phoenixnebula:latest
 docker run -it nobodydeveloper/phoenixnebula:latest
 ```
+## Binary Distribution 🛠️
+
+PhoenixNebula can be distributed as a **standalone binary**, so users can run it without installing Python.
+
+### Build with PyInstaller (Recommended)
+
+Install PyInstaller:
+
+```bash
+pip install pyinstaller
+git clone https://github.com/SysTechSalihY/phoenixnebula.git
+cd phoenixnebula
+pyinstaller --onefile phoenixnebula/phoenixnebula.py
+Run it directly: ./dist/phoenixnebula
 
 ### From source (Development)
 
