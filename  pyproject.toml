@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "phoenixnebula-cli"
-version = "1.0.0"
+version = "1.0.1"
 description = "A feature-rich, customizable Unix shell with themes and job control"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "Salih Yılboğa", email = "salihyilboga98@gmail.com"}

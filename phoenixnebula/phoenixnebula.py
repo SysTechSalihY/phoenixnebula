@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import sys
 import os
 import stat
@@ -27,12 +26,12 @@ PATH = os.environ.get("PATH", os.defpath)
 HOME = os.environ.get("HOME", os.path.expanduser("~"))
 
 histfile_env = os.environ.get("HISTFILE", "")
-HISTORY_FILE = histfile_env if histfile_env else os.path.join(HOME, ".myshell_history")
-RCFILE = os.path.join(HOME, ".myshellrc")
+HISTORY_FILE = histfile_env if histfile_env else os.path.join(HOME, ".phoenixnebula_history")
+RCFILE = os.path.join(HOME, ".phoenixnebularc")
 
 # Theme colors - ANSI escape codes
-THEME_DIR = os.path.join(HOME, ".myshell", "themes")
-CONFIG_FILE = os.path.join(HOME, ".myshell", "config.json")
+THEME_DIR = os.path.join(HOME, ".phoenixnebula", "themes")
+CONFIG_FILE = os.path.join(HOME, ".phoenixnebula", "config.json")
 
 last_appended_position = 0
 foreground_pgid = None

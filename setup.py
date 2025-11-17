@@ -9,7 +9,7 @@ long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="phoenixnebula-cli",
-    version="1.0.0",
+    version="1.0.1",
     author="Salih",
     author_email="salihyilboga98@gmail.com",
     description="A feature-rich, customizable Unix shell with themes and job control",
