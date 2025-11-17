@@ -1,20 +1,20 @@
 
 services:
-  phoenixnebula-dev:
+  phoenixnebula:
     build:
       context: .
       dockerfile: Dockerfile
-    image: phoenixnebula:dev
-    container_name: phoenixnebula-dev
+    image: nobodydeveloper/phoenixnebula:latest
+    container_name: phoenixnebula
     stdin_open: true
     tty: true
     
     volumes:
       - .:/app
       # Mount home directory for shell history and config
-      - phoenixnebula-home-dev:/home/phoenixnebula
+      - phoenixnebula:/home/phoenixnebula
       # Mount themes directory
-      - phoenixnebula-themes-dev:/home/phoenixnebula/.phoenixnebula/themes
+      - phoenixnebula:/home/phoenixnebula/.phoenixnebula/themes
     
     environment:
       - PYTHONUNBUFFERED=1
@@ -37,12 +37,12 @@ services:
           memory: 512M
 
 volumes:
-  phoenixnebula-home-dev:
+  phoenixnebula-home:
     driver: local
-  phoenixnebula-themes-dev:
+  phoenixnebula-themes:
     driver: local
 
 networks:
   default:
-    name: phoenixnebula-dev
+    name: phoenixnebula
     driver: bridge
