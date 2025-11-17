@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import os
 import stat
@@ -38,9 +40,6 @@ shell_pgid = os.getpgrp()
 shell_pid = os.getpid()
 
 ALLOWED_COMMANDS_DIRS = ["/usr/bin", "/bin", "/usr/local/bin"]
-
-
-
 
 BUILTIN_THEMES = {
     "dracula": {
