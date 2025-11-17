@@ -400,20 +400,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues, questions, or suggestions:
 
-1. Check existing [GitHub Issues](https://github.com/yourusername/phoenixnebula/issues)
+1. Check existing [GitHub Issues](https://github.com/SysTechSalihY/phoenixnebula/issues)
 2. Create a new issue with detailed description
 3. Submit a Pull Request with improvements
 
-## Changelog 📝
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and changes.
 
 ## Security Policy 🔐
 
-If you discover a security vulnerability, please email security@phoenixnebula.local instead of using the issue tracker.
+If you discover a security vulnerability, please email salihyilboga98@gmail.com instead of using the issue tracker.
 
 ---
 
 **Enjoy using PhoenixNebula!** 🎉
 
-For more information and advanced usage, visit the [GitHub repository](https://github.com/yourusername/phoenixnebula).
+For more information and advanced usage, visit the [GitHub repository](https://github.com/SysTechSalihY/phoenixnebula).
