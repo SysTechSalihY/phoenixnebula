@@ -26,7 +26,9 @@ PATH = os.environ.get("PATH", os.defpath)
 HOME = os.environ.get("HOME", os.path.expanduser("~"))
 
 histfile_env = os.environ.get("HISTFILE", "")
-HISTORY_FILE = histfile_env if histfile_env else os.path.join(HOME, ".phoenixnebula_history")
+HISTORY_FILE = (
+    histfile_env if histfile_env else os.path.join(HOME, ".phoenixnebula_history")
+)
 RCFILE = os.path.join(HOME, ".phoenixnebularc")
 
 # Theme colors - ANSI escape codes
@@ -65,7 +67,7 @@ BUILTIN_THEMES = {
         "prompt_user": "#50fa7b",
         "prompt_host": "#8be9fd",
         "prompt_path": "#f1fa8c",
-        "prompt_symbol": "#ff79c6"
+        "prompt_symbol": "#ff79c6",
     },
     "solarized_dark": {
         "name": "Solarized Dark",
@@ -91,7 +93,7 @@ BUILTIN_THEMES = {
         "prompt_user": "#859900",
         "prompt_host": "#268bd2",
         "prompt_path": "#b58900",
-        "prompt_symbol": "#dc322f"
+        "prompt_symbol": "#dc322f",
     },
     "nord": {
         "name": "Nord",
@@ -117,7 +119,7 @@ BUILTIN_THEMES = {
         "prompt_user": "#a3be8c",
         "prompt_host": "#88c0d0",
         "prompt_path": "#ebcb8b",
-        "prompt_symbol": "#bf616a"
+        "prompt_symbol": "#bf616a",
     },
     "monokai": {
         "name": "Monokai",
@@ -143,7 +145,7 @@ BUILTIN_THEMES = {
         "prompt_user": "#a6e22e",
         "prompt_host": "#66d9ef",
         "prompt_path": "#f4bf75",
-        "prompt_symbol": "#f92672"
+        "prompt_symbol": "#f92672",
     },
     "gruvbox": {
         "name": "Gruvbox Dark",
@@ -169,8 +171,8 @@ BUILTIN_THEMES = {
         "prompt_user": "#b8bb26",
         "prompt_host": "#83a598",
         "prompt_path": "#fabd2f",
-        "prompt_symbol": "#fb4934"
-    }
+        "prompt_symbol": "#fb4934",
+    },
 }
 
 current_theme = "dracula"
@@ -183,17 +185,19 @@ def hex_to_ansi(hex_color: str):
     r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
     return f"\033[38;2;{r};{g};{b}m"
 
+
 def get_theme(theme_name):
     """Get theme by name, checking custom then builtin."""
     if os.path.exists(THEME_DIR):
         custom_file = os.path.join(THEME_DIR, f"{theme_name}.json")
         if os.path.exists(custom_file):
             try:
-                with open(custom_file, 'r') as f:
+                with open(custom_file, "r") as f:
                     return json.load(f)
             except:
                 pass
     return BUILTIN_THEMES.get(theme_name, BUILTIN_THEMES["dracula"])
+
 
 def list_themes():
     """List all available themes."""
@@ -201,12 +205,13 @@ def list_themes():
     if os.path.exists(THEME_DIR):
         try:
             for file in os.listdir(THEME_DIR):
-                if file.endswith('.json'):
+                if file.endswith(".json"):
                     themes.append(file[:-5])
         except:
             pass
-    
+
     return sorted(set(themes))
+
 
 def apply_theme(theme_name):
     """Apply a theme."""
@@ -215,53 +220,56 @@ def apply_theme(theme_name):
     if theme:
         current_theme = theme_name
         theme_colors = theme
-        
+
         os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
         config = {}
         if os.path.exists(CONFIG_FILE):
             try:
-                with open(CONFIG_FILE, 'r') as f:
+                with open(CONFIG_FILE, "r") as f:
                     config = json.load(f)
             except:
                 pass
-        
+
         config["theme"] = theme_name
-        with open(CONFIG_FILE, 'w') as f:
+        with open(CONFIG_FILE, "w") as f:
             json.dump(config, f, indent=2)
-        
+
         set_terminal_colors(theme)
-        
+
         return f"Theme applied: {theme.get('name', theme_name)}"
     return "Theme not found"
+
 
 def set_terminal_colors(theme):
     """Set terminal background and foreground colors."""
     bg = theme.get("background", "#282a36")
     fg = theme.get("foreground", "#f8f8f2")
-    print(f"\033]11;{bg}\007", end='', flush=True)
-    print(f"\033]10;{fg}\007", end='', flush=True)
+    print(f"\033]11;{bg}\007", end="", flush=True)
+    print(f"\033]10;{fg}\007", end="", flush=True)
     cursor = theme.get("cursor_color", fg)
-    print(f"\033]12;{cursor}\007", end='', flush=True)
+    print(f"\033]12;{cursor}\007", end="", flush=True)
+
 
 def save_custom_theme(theme_name, theme_data):
     """Save a custom theme."""
     os.makedirs(THEME_DIR, exist_ok=True)
     theme_file = os.path.join(THEME_DIR, f"{theme_name}.json")
-    
+
     try:
-        with open(theme_file, 'w') as f:
+        with open(theme_file, "w") as f:
             json.dump(theme_data, f, indent=2)
         return f"Theme '{theme_name}' saved successfully"
     except Exception as e:
         return f"Error saving theme: {e}"
 
+
 def load_config():
     """Load shell configuration."""
     global current_theme, theme_colors
-    
+
     if os.path.exists(CONFIG_FILE):
         try:
-            with open(CONFIG_FILE, 'r') as f:
+            with open(CONFIG_FILE, "r") as f:
                 config = json.load(f)
                 theme_name = config.get("theme", "dracula")
                 theme_colors = get_theme(theme_name)
@@ -273,6 +281,7 @@ def load_config():
     else:
         theme_colors = BUILTIN_THEMES["dracula"]
         current_theme = "dracula"
+
 
 # Shell variables
 shell_vars = {
@@ -308,8 +317,8 @@ def restore_terminal():
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_termios)
         except:
             pass
-    print("\033]110\007", end='', flush=True) 
-    print("\033]111\007", end='', flush=True) 
+    print("\033]110\007", end="", flush=True)
+    print("\033]111\007", end="", flush=True)
 
 
 def load_rc_file():
@@ -323,9 +332,12 @@ def load_rc_file():
                         if line.startswith("alias "):
                             parts = line[6:].split("=", 1)
                             if len(parts) == 2:
-                                aliases[parts[0].strip()] = parts[1].strip().strip("'\"")
+                                aliases[parts[0].strip()] = (
+                                    parts[1].strip().strip("'\"")
+                                )
         except Exception as e:
             print(f"Error loading {RCFILE}: {e}")
+
 
 load_config()
 
@@ -342,28 +354,73 @@ atexit.register(restore_terminal)
 
 
 def handle_signal(sig, frame):
-    """Forward signals to foreground process group."""
+    """Forward signals to foreground process group or pid."""
     global foreground_pgid
-    if foreground_pgid is not None and foreground_pgid > 0:
+    if foreground_pgid is None:
+        return
+    try:
+        os.killpg(foreground_pgid, sig)
+    except ProcessLookupError:
         try:
-            os.killpg(foreground_pgid, sig)
-        except (ProcessLookupError, OSError):
+            os.kill(foreground_pgid, sig)
+        except Exception:
             pass
+    except Exception:
+        pass
 
 
 def handle_sigchld(sig, frame):
-    """Reap zombie processes and update job status."""
-    global background_jobs
+    """Reap zombie processes and update background job statuses.
+    Also update last_exit_code when a foreground process group exits.
+    """
+    global background_jobs, foreground_pgid, last_exit_code
     try:
         while True:
-            pid, status = os.waitpid(-1, os.WNOHANG)
+            # wait for any child without blocking
+            pid, status = os.waitpid(-1, os.WNOHANG | os.WUNTRACED | os.WCONTINUED)
             if pid == 0:
                 break
-            for job_id, job in background_jobs.items():
-                if job["pid"] == pid:
-                    job["status"] = "done"
-                    job["returncode"] = os.WEXITSTATUS(status)
+
+            # Update background job if we know it
+            handled = False
+            for job_id, job in list(background_jobs.items()):
+                if job.get("pid") == pid:
+                    handled = True
+                    if os.WIFEXITED(status):
+                        job["status"] = "done"
+                        job["returncode"] = os.WEXITSTATUS(status)
+                    elif os.WIFSIGNALED(status):
+                        job["status"] = "terminated"
+                        job["returncode"] = os.WTERMSIG(status)
+                    elif os.WIFSTOPPED(status):
+                        job["status"] = "stopped"
+                        job["returncode"] = os.WSTOPSIG(status)
+                    elif os.WIFCONTINUED(status):
+                        job["status"] = "running"
+                        job["returncode"] = None
+                    break
+
+            # If not a background job, it may belong to the foreground process group.
+            if not handled and foreground_pgid is not None:
+                try:
+                    proc_pgid = os.getpgid(pid)
+                except OSError:
+                    proc_pgid = None
+
+                if proc_pgid == foreground_pgid:
+                    # Foreground job changed state or exited
+                    if os.WIFEXITED(status):
+                        last_exit_code = os.WEXITSTATUS(status)
+                    elif os.WIFSIGNALED(status):
+                        last_exit_code = 128 + os.WTERMSIG(status)
+                    # clear foreground pgid so shell resumes control
+                    foreground_pgid = None
+
     except ChildProcessError:
+        # no more children
+        pass
+    except OSError:
+        # ignore transient OS errors in the handler
         pass
 
 
@@ -397,22 +454,24 @@ def format_prompt(prompt_str):
         hostname = os.environ.get("HOSTNAME", "host")
     cwd = os.getcwd()
     home = os.path.expanduser("~")
-    
+
     if cwd.startswith(home):
-        cwd = "~" + cwd[len(home):]
-    
+        cwd = "~" + cwd[len(home) :]
+
     reset = "\033[0m"
     user_color = hex_to_ansi(theme_colors.get("prompt_user", "#50fa7b"))
     host_color = hex_to_ansi(theme_colors.get("prompt_host", "#8be9fd"))
     path_color = hex_to_ansi(theme_colors.get("prompt_path", "#f1fa8c"))
     symbol_color = hex_to_ansi(theme_colors.get("prompt_symbol", "#ff79c6"))
-    
+
     prompt_str = prompt_str.replace("\\u", f"{user_color}{user}{reset}")
     prompt_str = prompt_str.replace("\\h", f"{host_color}{hostname}{reset}")
     prompt_str = prompt_str.replace("\\w", f"{path_color}{cwd}{reset}")
-    prompt_str = prompt_str.replace("\\$", f"{symbol_color}{'#' if os.getuid() == 0 else '$'}{reset}")
+    prompt_str = prompt_str.replace(
+        "\\$", f"{symbol_color}{'#' if os.getuid() == 0 else '$'}{reset}"
+    )
     prompt_str = prompt_str.replace("\\\\", "\\")
-    
+
     return prompt_str
 
 
@@ -424,9 +483,12 @@ def run_with_pty(argv, background=False):
         pid, fd = pty.fork()
     except Exception:
         return run_subprocess(argv, background)
-    
+
     if pid == 0:
+        os.setsid()
+        os.setpgid(0, 0)
         try:
+            os.tcsetpgrp(sys.stdin.fileno(), os.getpgrp())
             os.execvp(argv[0], argv)
         except FileNotFoundError:
             print(f"{argv[0]}: command not found", file=sys.stderr)
@@ -442,17 +504,17 @@ def run_with_pty(argv, background=False):
                 "pid": pid,
                 "cmd": " ".join(argv),
                 "status": "running",
-                "returncode": None
+                "returncode": None,
             }
             print(f"[{job_id}] {pid}")
             last_exit_code = 0
         else:
             foreground_pgid = pid
             old_settings = None
-            
+
             try:
                 try:
-                    os.tcsetpgrp(sys.stdin.fileno(), pid)
+                    os.tcsetpgrp(sys.stdin.fileno(), foreground_pgid)
                 except (OSError, AttributeError):
                     pass
                 try:
@@ -465,7 +527,7 @@ def run_with_pty(argv, background=False):
                         rlist, _, _ = select.select([fd, sys.stdin], [], [])
                     except (select.error, OSError):
                         break
-                    
+
                     if fd in rlist:
                         try:
                             data = os.read(fd, 4096)
@@ -474,7 +536,7 @@ def run_with_pty(argv, background=False):
                             os.write(sys.stdout.fileno(), data)
                         except OSError:
                             break
-                    
+
                     if sys.stdin in rlist:
                         try:
                             data = os.read(sys.stdin.fileno(), 4096)
@@ -483,21 +545,21 @@ def run_with_pty(argv, background=False):
                             os.write(fd, data)
                         except OSError:
                             break
-            
+
             finally:
                 if old_settings:
                     try:
                         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
                     except:
                         pass
-                
+
                 try:
                     os.tcsetpgrp(sys.stdin.fileno(), shell_pgid)
                 except (OSError, AttributeError):
                     pass
-                
+
                 foreground_pgid = None
-                
+
                 try:
                     _, status = os.waitpid(pid, 0)
                     last_exit_code = os.WEXITSTATUS(status)
@@ -506,24 +568,53 @@ def run_with_pty(argv, background=False):
 
 
 def run_subprocess(argv, background=False):
-    """Execute command using subprocess (for non-interactive programs)."""
-    global last_exit_code, next_job_id, background_jobs
+    """Execute command using subprocess with proper process groups and terminal control."""
+    global last_exit_code, next_job_id, background_jobs, foreground_pgid, shell_pgid
     try:
         if background:
-            proc = subprocess.Popen(argv, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            proc = subprocess.Popen(
+                argv,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                preexec_fn=os.setsid,
+            )
             job_id = next_job_id
             next_job_id += 1
             background_jobs[job_id] = {
                 "pid": proc.pid,
                 "cmd": " ".join(argv),
                 "status": "running",
-                "returncode": None
+                "returncode": None,
             }
             print(f"[{job_id}] {proc.pid}")
             last_exit_code = 0
         else:
-            result = subprocess.run(argv)
-            last_exit_code = result.returncode
+            proc = subprocess.Popen(argv, preexec_fn=os.setsid)
+            fg_pgid = proc.pid
+            foreground_pgid = fg_pgid
+            try:
+                os.tcsetpgrp(sys.stdin.fileno(), fg_pgid)
+            except Exception:
+                pass
+            try:
+                _, status = os.waitpid(proc.pid, 0)
+                if os.WIFEXITED(status):
+                    last_exit_code = os.WEXITSTATUS(status)
+                elif os.WIFSIGNALED(status):
+                    last_exit_code = 128 + os.WTERMSIG(status)
+                else:
+                    last_exit_code = 1
+            except KeyboardInterrupt:
+                pass
+            except Exception:
+                pass
+            finally:
+                try:
+                    os.tcsetpgrp(sys.stdin.fileno(), shell_pgid)
+                except Exception:
+                    pass
+                foreground_pgid = None
+
     except KeyboardInterrupt:
         last_exit_code = 130
     except FileNotFoundError:
@@ -536,11 +627,39 @@ def run_subprocess(argv, background=False):
 
 # List of programs that should use PTY (interactive programs)
 INTERACTIVE_PROGRAMS = {
-    "vim", "vi", "nano", "emacs", "less", "more", "man", "htop", "top",
-    "clear", "ncurses", "screen", "tmux", "git", "ssh", "telnet", "ftp",
-    "bash", "sh", "zsh", "ksh", "python", "python3", "node", "ruby",
-    "perl", "lua", "irb", "pry", "ipython", "ghci"
+    "vim",
+    "vi",
+    "nano",
+    "emacs",
+    "less",
+    "more",
+    "man",
+    "htop",
+    "top",
+    "clear",
+    "ncurses",
+    "screen",
+    "tmux",
+    "git",
+    "ssh",
+    "telnet",
+    "ftp",
+    "bash",
+    "sh",
+    "zsh",
+    "ksh",
+    "python",
+    "python3",
+    "node",
+    "ruby",
+    "perl",
+    "lua",
+    "irb",
+    "pry",
+    "ipython",
+    "ghci",
 }
+
 
 def should_use_pty(cmd):
     """Determine if command should use PTY."""
@@ -565,7 +684,7 @@ def write_history_to_file(file_path: str):
         dir_path = os.path.dirname(file_path)
         if dir_path and not os.path.exists(dir_path):
             os.makedirs(dir_path, exist_ok=True)
-        
+
         with open(file_path, "w") as f:
             f.write(get_history())
     except Exception as e:
@@ -575,20 +694,20 @@ def write_history_to_file(file_path: str):
 def append_history_to_file(file_path: str):
     """Append only new commands to the file."""
     global last_appended_position
-    
+
     try:
         dir_path = os.path.dirname(file_path)
         if dir_path and not os.path.exists(dir_path):
             os.makedirs(dir_path, exist_ok=True)
-        
+
         current_length = readline.get_current_history_length()
-        
+
         with open(file_path, "a") as f:
             for i in range(last_appended_position + 1, current_length + 1):
                 item = readline.get_history_item(i)
                 if item:
                     f.write(item + "\n")
-        
+
         last_appended_position = current_length
     except Exception as e:
         print(f"history: error appending to {file_path}: {e}")
@@ -601,7 +720,7 @@ def load_history_from_file(file_path: str):
     if not os.path.exists(file_path):
         print(f"history: {file_path}: No such file or directory")
         return
-    
+
     try:
         with open(file_path, "r") as f:
             for line in f:
@@ -630,7 +749,9 @@ def is_executable(file_path):
     """Check if file is executable."""
     try:
         st = os.stat(file_path)
-        return stat.S_ISREG(st.st_mode) and (st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH))
+        return stat.S_ISREG(st.st_mode) and (
+            st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        )
     except FileNotFoundError:
         return False
 
@@ -645,24 +766,44 @@ def find_executable(cmd):
             return full_path
     return None
 
+
 def is_builtin(cmd):
     """Check if command is a shell builtin."""
-    return cmd in ["echo", "exit", "type", "pwd", "cd", "history", "alias", "unalias", 
-                   "export", "unset", "set", "source", ".", "true", "false", "jobs", 
-                   "bg", "fg", "theme", "clear"]
+    return cmd in [
+        "echo",
+        "exit",
+        "type",
+        "pwd",
+        "cd",
+        "history",
+        "alias",
+        "unalias",
+        "export",
+        "unset",
+        "set",
+        "source",
+        ".",
+        "true",
+        "false",
+        "jobs",
+        "bg",
+        "fg",
+        "theme",
+        "clear",
+    ]
 
 
 def run_builtin(cmd_tokens, stdin_data=None):
     """Run a builtin command and return its output."""
     global last_exit_code
-    
+
     if not cmd_tokens:
         return ""
-    
+
     cmd = cmd_tokens[0]
     args = cmd_tokens[1:]
     output = ""
-    
+
     if cmd == "echo":
         output = " ".join(args) + "\n"
     elif cmd == "type":
@@ -689,7 +830,7 @@ def run_builtin(cmd_tokens, stdin_data=None):
                 new_path = HOME
             elif not os.path.isabs(new_path):
                 new_path = os.path.normpath(os.path.join(os.getcwd(), new_path))
-        
+
         if os.path.isdir(new_path):
             os.chdir(new_path)
             last_exit_code = 0
@@ -704,9 +845,9 @@ def run_builtin(cmd_tokens, stdin_data=None):
         sys.exit(exit_code)
     elif cmd == "clear":
         try:
-           os.system("clear")
+            os.system("clear")
         except:
-           os.write(sys.stdout.fileno(), b"\033[2J\033[H")
+            os.write(sys.stdout.fileno(), b"\033[2J\033[H")
     elif cmd == "true":
         last_exit_code = 0
     elif cmd == "false":
@@ -799,38 +940,66 @@ def run_builtin(cmd_tokens, stdin_data=None):
             try:
                 job_id = int(args[0].lstrip("%"))
                 if job_id in background_jobs:
-                    background_jobs[job_id]["status"] = "running"
-                    output = f"[{job_id}]  {background_jobs[job_id]['cmd']}\n"
+                    job = background_jobs[job_id]
+                    try:
+                        os.killpg(job["pid"], signal.SIGCONT)  # resume the job
+                        job["status"] = "running"
+                        print(f"[{job_id}] {job['cmd']}")
+                    except Exception as e:
+                        print(f"bg: {e}")
                 else:
                     output = f"bg: no such job\n"
             except (ValueError, IndexError):
                 output = "usage: bg %jobid\n"
+
     elif cmd == "fg":
         if args:
             try:
                 job_id = int(args[0].lstrip("%"))
                 if job_id in background_jobs:
                     job = background_jobs[job_id]
+                    pid = job["pid"]
+
+                    # Give terminal control to job
                     try:
-                        os.waitpid(job["pid"], 0)
+                        os.tcsetpgrp(sys.stdin.fileno(), pid)
+                    except Exception:
+                        pass
+
+                    try:
+                        os.killpg(pid, signal.SIGCONT)  # resume the job
+                    except Exception:
+                        pass
+
+                    # Wait for it to finish
+                    try:
+                        _, status = os.waitpid(pid, 0)
                         job["status"] = "done"
-                    except:
+                        job["returncode"] = os.WEXITSTATUS(status)
+                    except Exception:
+                        pass
+
+                    # Restore terminal to shell
+                    try:
+                        os.tcsetpgrp(sys.stdin.fileno(), shell_pgid)
+                    except Exception:
                         pass
                 else:
                     output = f"fg: no such job\n"
             except (ValueError, IndexError):
                 output = "usage: fg %jobid\n"
-    
+
     return output
 
 
 def expand_variables(text):
     """Expand shell variables."""
+
     def replace_var(match):
         var_name = match.group(1) or match.group(2)
         return os.environ.get(var_name, "")
-    
-    text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
+
+    text = re.sub(r"\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)", replace_var, text)
     return text
 
 
@@ -851,12 +1020,12 @@ def pipeline_run(cmd_strings):
         cmd_str = cmd_str.strip()
         cmd_str = expand_variables(cmd_str)
         cmd_str = expand_tilde(cmd_str)
-        
+
         tokens = shlex.split(cmd_str)
         if tokens:
             tokens[0] = expand_alias(tokens[0])
             cmds.append(tokens)
-    
+
     if not cmds:
         return
 
@@ -864,7 +1033,7 @@ def pipeline_run(cmd_strings):
         cmd = cmds[0][0]
         if is_builtin(cmd):
             output = run_builtin(cmds[0])
-            print(output, end='')
+            print(output, end="")
         else:
             executable_path = find_executable(cmd) if not os.path.isabs(cmd) else cmd
             if executable_path or os.path.exists(cmd):
@@ -880,29 +1049,31 @@ def pipeline_run(cmd_strings):
         return
 
     has_builtin = any(is_builtin(tokens[0]) for tokens in cmds)
-    
+
     if not has_builtin:
         processes = []
         for i, cmd_tokens in enumerate(cmds):
             cmd = cmd_tokens[0]
             executable_path = find_executable(cmd) if not os.path.isabs(cmd) else cmd
-            
+
             if not executable_path and not os.path.exists(cmd):
                 print(f"{cmd}: command not found")
                 return
-            
+
             if i == 0:
                 proc = subprocess.Popen(cmd_tokens, stdout=subprocess.PIPE)
             elif i == len(cmds) - 1:
                 proc = subprocess.Popen(cmd_tokens, stdin=processes[-1].stdout)
             else:
-                proc = subprocess.Popen(cmd_tokens, stdin=processes[-1].stdout, stdout=subprocess.PIPE)
-            
+                proc = subprocess.Popen(
+                    cmd_tokens, stdin=processes[-1].stdout, stdout=subprocess.PIPE
+                )
+
             if i > 0:
                 processes[-1].stdout.close()
-            
+
             processes.append(proc)
-        
+
         try:
             processes[-1].wait()
         except KeyboardInterrupt:
@@ -913,24 +1084,26 @@ def pipeline_run(cmd_strings):
                     pass
     else:
         stdin_data = None
-        
+
         for i, cmd_tokens in enumerate(cmds):
             cmd = cmd_tokens[0]
-            is_last = (i == len(cmds) - 1)
-            
+            is_last = i == len(cmds) - 1
+
             if is_builtin(cmd):
                 output = run_builtin(cmd_tokens, stdin_data)
                 if is_last:
-                    print(output, end='')
+                    print(output, end="")
                 else:
                     stdin_data = output.encode()
             else:
-                executable_path = find_executable(cmd) if not os.path.isabs(cmd) else cmd
-                
+                executable_path = (
+                    find_executable(cmd) if not os.path.isabs(cmd) else cmd
+                )
+
                 if not executable_path and not os.path.exists(cmd):
                     print(f"{cmd}: command not found")
                     return
-                
+
                 try:
                     if is_last:
                         if stdin_data:
@@ -940,7 +1113,11 @@ def pipeline_run(cmd_strings):
                             subprocess.run(cmd_tokens)
                     else:
                         if stdin_data:
-                            proc = subprocess.Popen(cmd_tokens, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                            proc = subprocess.Popen(
+                                cmd_tokens,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                            )
                             stdout, _ = proc.communicate(stdin_data)
                         else:
                             proc = subprocess.Popen(cmd_tokens, stdout=subprocess.PIPE)
@@ -956,18 +1133,18 @@ def redirect_run(cmd_part, file_part, to_stderr=False, append=False):
     file_part = file_part.strip()
     cmd_part = expand_variables(cmd_part)
     file_part = expand_variables(expand_tilde(file_part))
-    
+
     try:
         tokens = shlex.split(cmd_part)
     except ValueError as e:
         print(f"Parse error: {e}")
         return
-    
+
     if not tokens:
         return
-    
+
     tokens[0] = expand_alias(tokens[0])
-    
+
     try:
         parent_dir = os.path.dirname(file_part)
         if parent_dir:
@@ -975,7 +1152,7 @@ def redirect_run(cmd_part, file_part, to_stderr=False, append=False):
     except Exception as e:
         print(f"Error creating directory: {e}")
         return
-    
+
     cmd = tokens[0]
     mode = "a" if append else "w"
 
@@ -1010,14 +1187,27 @@ cached_matches = []
 
 def get_matches(text):
     """Get completion matches."""
-    builtins = ["echo", "exit", "type", "pwd", "cd", "history", "alias", "export", 
-                "theme", "clear", "jobs", "bg", "fg"]
+    builtins = [
+        "echo",
+        "exit",
+        "type",
+        "pwd",
+        "cd",
+        "history",
+        "alias",
+        "export",
+        "theme",
+        "clear",
+        "jobs",
+        "bg",
+        "fg",
+    ]
     results = []
-    
+
     for b in builtins:
         if b.startswith(text):
             results.append(b + " ")
-    
+
     for path_dir in PATH.split(os.pathsep):
         if not path_dir:
             continue
@@ -1027,7 +1217,7 @@ def get_matches(text):
                     results.append(name + " ")
         except (FileNotFoundError, PermissionError):
             continue
-    
+
     results.extend(glob.glob(text + "*"))
     return list(dict.fromkeys(results))
 
@@ -1035,15 +1225,15 @@ def get_matches(text):
 def completer(text, state):
     """Readline completer function."""
     global last_completion_text, tab_press_count, cached_matches
-    
+
     if text != last_completion_text:
         last_completion_text = text
         tab_press_count = 0
         cached_matches = get_matches(text)
-    
+
     if state == 0:
         tab_press_count += 1
-    
+
     try:
         return cached_matches[state]
     except IndexError:
@@ -1053,19 +1243,23 @@ def completer(text, state):
 def display_matches_hook(substitution, matches, longest_match_length):
     """Display completion matches."""
     global tab_press_count
-    
+
     if len(matches) <= 1:
         tab_press_count = 0
         return
-    
+
     if tab_press_count == 1:
-        sys.stdout.write('\a')
+        sys.stdout.write("\a")
         sys.stdout.flush()
     else:
         display_matches = [m.rstrip() for m in matches]
         print()
         print("  ".join(display_matches))
-        print(format_prompt(shell_vars.get("PS1", "$ ")) + readline.get_line_buffer(), end='', flush=True)
+        print(
+            format_prompt(shell_vars.get("PS1", "$ ")) + readline.get_line_buffer(),
+            end="",
+            flush=True,
+        )
 
 
 readline.parse_and_bind("set enable-keypad on")
@@ -1083,7 +1277,7 @@ def check_background_jobs():
         if job["status"] == "done":
             print(f"[{job_id}]  Done({job['returncode']})  {job['cmd']}")
             completed.append(job_id)
-    
+
     for job_id in completed:
         del background_jobs[job_id]
 
@@ -1098,23 +1292,27 @@ def expand_alias(cmd):
 def main():
     """Main shell loop."""
     global tab_press_count, last_completion_text, last_appended_position
-    
+
     last_appended_position = readline.get_current_history_length()
-    print(f"\033[1m{hex_to_ansi(theme_colors.get('green', '#50fa7b'))}Welcome to MyShell\033[0m")
-    print(f"Current theme: {hex_to_ansi(theme_colors.get('cyan', '#8be9fd'))}{current_theme}\033[0m")
+    print(
+        f"\033[1m{hex_to_ansi(theme_colors.get('green', '#50fa7b'))}Welcome to MyShell\033[0m"
+    )
+    print(
+        f"Current theme: {hex_to_ansi(theme_colors.get('cyan', '#8be9fd'))}{current_theme}\033[0m"
+    )
     print(f"Type 'theme list' to see available themes\n")
-    
+
     try:
         current_dir = os.getcwd()
     except OSError:
         current_dir = HOME
-    
+
     while True:
         tab_press_count = 0
         last_completion_text = None
-        
+
         check_background_jobs()
-        
+
         try:
             prompt = format_prompt(shell_vars.get("PS1", "$ "))
             command = input(prompt).strip()
@@ -1124,7 +1322,7 @@ def main():
         except KeyboardInterrupt:
             print()
             continue
-        
+
         if not command:
             continue
 
@@ -1134,11 +1332,11 @@ def main():
         background = command.endswith("&")
         if background:
             command = command[:-1].strip()
-        
+
         if "|" in command:
             pipeline_run(command.split("|"))
             continue
-        
+
         if "2>>" in command:
             parts = command.split("2>>", 1)
             redirect_run(parts[0], parts[1], to_stderr=True, append=True)
@@ -1163,7 +1361,7 @@ def main():
             parts = command.split(">", 1)
             redirect_run(parts[0], parts[1])
             continue
-        
+
         if command.startswith("history"):
             parts = command.split(maxsplit=2)
             if len(parts) >= 2 and parts[1] == "-r":
@@ -1193,33 +1391,35 @@ def main():
                         pass
                 show_history(n)
                 continue
-        
+
         try:
             tokens = shlex.split(command)
         except ValueError as e:
             print(f"Parse error: {e}")
             continue
-        
+
         if not tokens:
             continue
-        
+
         tokens[0] = expand_alias(tokens[0])
         tokens = [expand_variables(expand_tilde(t)) for t in tokens]
-        
+
         original_executable = tokens[0]
 
         if is_builtin(original_executable):
             output = run_builtin(tokens)
-            print(output, end='')
+            print(output, end="")
             continue
 
-        if not os.path.isabs(original_executable) and not os.path.exists(original_executable):
+        if not os.path.isabs(original_executable) and not os.path.exists(
+            original_executable
+        ):
             path_exec = find_executable(original_executable)
             if not path_exec:
                 print(f"{original_executable}: command not found")
                 last_exit_code = 127
                 continue
-        
+
         try:
             if should_use_pty(original_executable):
                 run_with_pty(tokens, background=background)

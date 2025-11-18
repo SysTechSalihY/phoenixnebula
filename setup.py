@@ -9,7 +9,7 @@ long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="phoenixnebula-cli",
-    version="1.0.2",
+    version="1.0.3",
     author="Salih",
     author_email="salihyilboga98@gmail.com",
     description="A feature-rich, customizable Unix shell with themes and job control",
@@ -23,18 +23,13 @@ setup(
     },
     packages=find_packages(),
     py_modules=["phoenixnebula"],
-    python_requires=">=3.7",
+    python_requires=">=3.11",
     entry_points={
         "console_scripts": [
             "phoenixnebula=phoenixnebula.phoenixnebula:main",
         ],
     },
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
